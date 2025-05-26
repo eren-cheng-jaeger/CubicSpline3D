@@ -6,14 +6,14 @@ import matplotlib.pyplot as plt
 def test_spline3d():
     print("=== Testing spline3d (2D+1D cubic, x-y-z order) ===")
 
-    # 构造长方体网格 (4,4,5)
+    # construct rectangular grid and data  (4,4,5)
     x = np.arange(4)
     y = np.arange(4)
     z = np.arange(5)
     grid = (x, y, z)
     data = np.arange(4*4*5).reshape(4, 4, 5).astype(float)
 
-    # 测试整数点
+    # test integer points
     test_points = np.array([
         [0, 0, 0],
         [3, 3, 4],
@@ -27,7 +27,7 @@ def test_spline3d():
     for i, v in enumerate(vals_spline):
         print(f"Point {test_points[i]}: spline3d={v:.2f}, interpn-linear={vals_linear[i]:.2f}, expected={expected[i]:.2f}")
 
-    # 测试插值点
+    # test interpolation between points
     interp_points = np.array([
         [0.5, 0.5, 0.5],
         [1.0, 1.5, 2.0],
@@ -39,7 +39,7 @@ def test_spline3d():
     for pt, v1, v2 in zip(interp_points, interp_vals_spline, interp_vals_linear):
         print(f"Point {pt}: spline3d={v1:.2f}, interpn-linear={v2:.2f}")
 
-    # 测试超界
+    # test out-of-bounds points
     out_points = np.array([
         [-1, 0, 0],
         [0, 4, 0],
@@ -51,7 +51,7 @@ def test_spline3d():
     for pt, v1, v2 in zip(out_points, out_vals_spline, out_vals_linear):
         print(f"Point {pt}: spline3d={v1:.2f}, interpn-linear={v2:.2f} (should be 0.0)")
 
-    # 可视化 z=2 切片的 x-y 网格插值
+    # visualization
     xx, yy = np.meshgrid(np.linspace(0, 2, 30), np.linspace(0, 3, 40), indexing='ij')
     zz = np.full_like(xx, 2.0)
     pts = np.stack([xx.ravel(), yy.ravel(), zz.ravel()], axis=-1)
@@ -71,14 +71,14 @@ def test_spline3d():
     plt.tight_layout()
     plt.show()
 
-    # 用非线性数据
+    # test non-linear data
     x = np.arange(4)
     y = np.arange(4)
     z = np.arange(5)
     X, Y, Z = np.meshgrid(x, y, z, indexing='ij')
     data = np.sin(X) + np.cos(Y) + Z**2
 
-    # 1D切线对比
+    # 1D tangent line comparison
     z_line = np.linspace(0, 4, 100)
     pts = np.stack([np.full_like(z_line, 1.5), np.full_like(z_line, 2.0), z_line], axis=-1)
     vals_spline = spline3d((x, y, z), data, pts)
